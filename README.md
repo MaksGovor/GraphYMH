@@ -1,6 +1,6 @@
 # Graph.Lab-1
 
-Designation of some functions:
+## ***Designation of some functions:
 
 1) `doSymetrixMatrix(matrix)` - It takes in the input matrix and makes it symmetric for the non-directional graph
 
@@ -19,3 +19,8 @@ Designation of some functions:
 9) `check(from, to)` - Function that returns an event for the function evasion, depending on the location of 2 vertices
 
 10) `edge(matrix, directed)` - A function that takes a matrix as input and, relative to the matrix, transfers corresponding                                    vertices in the cycle to the evasion
+
+
+## HTML - [index.html](https://github.com/MaksGovor/Graph.Lab-1/blob/master/JS/index.html)
+## CSS - [style.css](https://github.com/MaksGovor/Graph.Lab-1/blob/master/JS/style.css)
+## JS - [code.js](https://github.com/MaksGovor/Graph.Lab-1/blob/master/JS/code.js)
