@@ -1,6 +1,6 @@
 # Graph.Lab-1
 
-## ***Designation of some functions:
+## Designation of some functions:
 
 1) `doSymetrixMatrix(matrix)` - It takes in the input matrix and makes it symmetric for the non-directional graph
 
