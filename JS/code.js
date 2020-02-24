@@ -18,6 +18,7 @@ const sides = {
   sideLeft: [],
   sideDown: [],
 };
+const QUANTITY = 10
 
 
 const matrix = [
@@ -46,20 +47,21 @@ const matrix = [
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ];*/
 
-const doSymetricMatrix = matrix => {
+const doSymetricMatrix = (matrix, transp) => {
   const sMatrix = [];
   for (let i = 0; i < matrix.length; i++) sMatrix.push(matrix[i].slice(0));
   for (let i = 0; i < sMatrix.length; i++){
     for (let j = 0 ; j < sMatrix[i].length; j++){
       if (matrix[i][j] === 1) {
         sMatrix[j][i] = 1;
+        if(transp && i !== j) sMatrix[i][j] = 0; 
       }
     }
   }
   return sMatrix;
 }
 
-const symetricMatrix = doSymetricMatrix(matrix);
+const symetricMatrix = doSymetricMatrix(matrix, false);
 
 const graphTriangle = n => {
   let width = canvas.width / 2;
@@ -126,7 +128,7 @@ const graphTriangle = n => {
   ctx.lineWidth = 4;
 };
 
-graphTriangle(10);
+graphTriangle(QUANTITY);
 
 
 const findCoords = (from, to, directed, arrowRadius) => {
@@ -361,6 +363,10 @@ const edge = (matrix, directed) => {
         const to = vertex['ver' + b];
         connections.set(from, to);
         branches['f' + a + 't' + b] = 1;
+        if (from.num === QUANTITY && to.num === 1) {
+          window.setTimeout(() => drawArrow(from, to, directed, arrowRadius, 'full'), 250);
+          continue;
+        }
         const checked = check(from, to);
         window.setTimeout(() => {
           console.log(checked);
@@ -374,4 +380,6 @@ const edge = (matrix, directed) => {
 edge(matrix, true);
 
 console.dir(branches);
+
+
 
