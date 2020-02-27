@@ -10,15 +10,17 @@ ctx.lineWidth = 5;
 ctx.font = '20px Vernada';
 const branches = new Object();
 const vertex = new Object();
+const degree = new Object();
 const connections = new Map(); 
 const radius = 30;
 let countD = 0;
+let countH = 0;
 const sides = {
   sideRight: [],
   sideLeft: [],
   sideDown: [],
 };
-const QUANTITY = 10
+const QUANTITY = 10;
 
 
 const matrix = [
@@ -46,6 +48,7 @@ const matrix = [
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ];*/
+
 
 const doSymetricMatrix = (matrix, transp) => {
   const sMatrix = [];
@@ -82,6 +85,7 @@ const graphTriangle = n => {
       ctx.stroke();
       const ver = { width, height, num: i }
       vertex['ver' + i] = ver;
+      degree['ver' + i] = {positive: 0, negative: 0};
       sides.sideLeft.push(ver);
       sides.sideRight.push(ver);
       continue;
@@ -94,6 +98,7 @@ const graphTriangle = n => {
     ctx.fillText(i, width - 5, height + 10);
     const verRight = { width, height, num: i};
     vertex['ver' + i] = verRight;
+    degree['ver' + i] = {positive: 0, negative: 0};
     sides.sideRight.push(verRight);
     ctx.stroke();
     ctx.beginPath();
@@ -102,6 +107,7 @@ const graphTriangle = n => {
     ctx.fillText(index, left - 5 , height + 10);
     const verLeft = { width: left, height , num: index};
     vertex['ver' + index] = verLeft;
+    degree['ver' + index] = {positive: 0, negative: 0};
     sides.sideLeft.push(verLeft);
     ctx.stroke();
     if (i === Math.floor(n / divider) - 1) 
@@ -119,6 +125,7 @@ const graphTriangle = n => {
     ctx.fillText(index, width - 5, height + 10);
     const verDown = { width, height, num: index };
     vertex['ver' + index] = verDown;
+    degree['ver' + index] = {positive: 0, negative: 0};
     sides.sideDown.push(verDown);
     ctx.stroke();
   }
@@ -304,9 +311,17 @@ const evasion = (from, to, event, directed, arrowRadius) => {
       if (checkOne(from, to, 'sideDown') || (from.height === to.height)) {
         countD++;
         const i = countD % 2 === 0 ? 10: -10;
-        console.log(i);
         height = from.height + i + i*Math.random();
         width = (to.width + from.width) / 2;
+        drawArrow(from ,{width, height},false , 0, 'begin');
+        drawArrow({width, height}, to, directed, arrowRadius, 'end');
+        return;
+      }
+      if (to.width === from.width) {
+        countH++;
+        const i = countH % 2 === 0 ? 10: -10;
+        height = (from.height + to.height) / 2;
+        width = from.width + i + i*Math.random();
         drawArrow(from ,{width, height},false , 0, 'begin');
         drawArrow({width, height}, to, directed, arrowRadius, 'end');
         return;
@@ -349,6 +364,7 @@ const check = (from, to) => {
 }
 
 const edge = (matrix, directed) => {
+  degree.status = directed;
   const arrowRadius = directed ? 12 : 0;
   let count = 200;
   for (let i = 0; i < matrix.length; i++) {
@@ -359,12 +375,19 @@ const edge = (matrix, directed) => {
         count += 100;
         const a = i + 1;
         const b = j + 1;
+        if (directed) {
+          degree['ver' + a].positive++;
+          degree['ver' + b].negative++;
+        } else {
+          degree['ver' + a].positive++;
+          degree['ver' + b].positive++;
+        }
         const from = vertex['ver' + a];
         const to = vertex['ver' + b];
         connections.set(from, to);
         branches['f' + a + 't' + b] = 1;
         if (from.num === QUANTITY && to.num === 1) {
-          window.setTimeout(() => drawArrow(from, to, directed, arrowRadius, 'full'), 250);
+          window.setTimeout(() => drawArrow(from, to, directed, arrowRadius, 'full'), count + 150);
           continue;
         }
         const checked = check(from, to);
@@ -377,9 +400,52 @@ const edge = (matrix, directed) => {
   }
 };
 
+const viewDegree = degree => {
+  const statistic = {
+    isolated:[],
+    hanging:[]
+  };
+  let ph = true;
+  let width = 30, height = 30;
+  const st1 = degree['ver' + 1].positive + degree['ver' + 1].negative;
+  for (let i = 1; i <= QUANTITY; i++ ) {
+    const str = degree.status ?
+      `Vertex ${i}: δ+(${i}) = ${degree['ver' + i].positive} δ-(${i}) = ${degree['ver' + i].negative}`:
+      `Vertex ${i}: δ(${i}) = ${degree['ver' + i].positive}`
+    ctx.beginPath()
+    ctx.fillText(str, width, height, 280);
+    height+= 30
+    ph = ph && (st1 === degree['ver' + i].positive + degree['ver' + i].negative) ? true: false;
+  }
+  for (let i = 1; i <= QUANTITY; i++){
+    if (i === 1) {
+      ctx.fillText('Isolated vertexes :', width, height);
+      height += 30;
+    }
+    if (degree['ver' + i].positive + degree['ver' + i].negative === 0) {
+      ctx.fillText(`Vertex ${i};`, width, height);
+      height += 30;
+    }
+  }
+  for (let i = 1; i <= QUANTITY; i++){
+    if (i === 1) {
+      ctx.fillText('Hahging vertexes :', width, height);
+      height += 30;
+    }
+    if (degree['ver' + i].positive + degree['ver' + i].negative === 1) {
+      ctx.fillText(`Vertex ${i};`, width, height);
+      height += 30;
+    }
+  }
+  if(ph) ctx.fillText('Graph is homogeneous, degree: ' + st1, width, height, 280);
+  return statistic;
+}
+
 edge(matrix, true);
 
+document.getElementById('statistics').onclick = function() {
+  viewDegree(degree)
+}
+
 console.dir(branches);
-
-
-
+console.dir(degree);
