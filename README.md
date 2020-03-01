@@ -2,7 +2,7 @@
 
 ## Designation of some functions:
 
-1) `doSymetrixMatrix(matrix)` - It takes in the input matrix and makes it symmetric for the non-directional graph
+1) `doSymetrixMatrix(matrix, transp)` - It takes in the input matrix and makes it symmetric for the non-directional graph, if flag transp is true transponate matrix
 
 2) `graphTriangle(n)` - places the vertices of the graph in the form of a triangle, where n is the number of vertices
 
@@ -19,6 +19,8 @@
 9) `check(from, to)` - Function that returns an event for the function evasion, depending on the location of 2 vertices
 
 10) `edge(matrix, directed)` - A function that takes a matrix as input and, relative to the matrix, transfers corresponding                                    vertices in the cycle to the evasion
+
+11) `viewDegree(degree)` - A function that takes the inputs of massmills of degrees, displays them depending on the type of graph, and analyzes the graph for hanging vertices, isolated vertices and homogeneity
 
 
 ## HTML - [index.html](https://github.com/MaksGovor/Graph.Lab-1/blob/master/JS/index.html)
