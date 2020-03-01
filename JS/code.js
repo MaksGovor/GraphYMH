@@ -412,7 +412,7 @@ const viewDegree = degree => {
   const st1 = degree['ver' + 1].positive + degree['ver' + 1].negative;
   for (let i = 1; i <= QUANTITY; i++ ) {
     const str = degree.status ?
-      `Vertex ${i}: δ+(${i}) = ${degree['ver' + i].positive} δ-(${i}) = ${degree['ver' + i].negative}`:
+      `Vertex ${i}: δ⁺(${i}) = ${degree['ver' + i].positive} δ⁻(${i}) = ${degree['ver' + i].negative}`:
       `Vertex ${i}: δ(${i}) = ${degree['ver' + i].positive}`
     ctx.beginPath()
     ctx.fillText(str, width, height, 280);
