@@ -1,3 +1,16 @@
 #c1{
     background-color: rgb(161, 161, 161);
 }
+
+#statistics, #reload{
+    margin-top: 6px;
+    padding: 2px;
+    background-color: rgb(161, 161, 161);
+    border-radius: 7px;
+    border: 2px solid rgb(0, 0, 0);
+    color: rgb(0, 0, 0);
+}
+
+#statistics:hover, #reload:hover {
+    box-shadow: 0 12px 16px 0 rgba(161, 161, 161, 0.719), 0 17px 50px 0 rgba(161, 161, 161, 0.815);
+}
