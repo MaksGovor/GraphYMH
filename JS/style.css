@@ -1,16 +1,61 @@
-#c1{
-    background-color: rgb(161, 161, 161);
+* {
+    box-sizing: border-box;
+}
+body {
+    background-image: url(./chip_protsessor_svechenie_140645_1920x1080.jpg);
 }
 
-#statistics, #reload{
+#c1, #c2{
+    position: relative;
+    top: 0;
+    left: 0;
+    padding: 0px;
+    border: 1px solid rgb(59, 0, 0);
+    box-sizing: border-box;
+    float: left;
+    background-color: rgba(100, 232, 255, 0.842);
+}
+#c1{
+    background-image: url(./canvasBg.jpg);
+}
+
+.over {
+    box-sizing: border-box;
+    float: left;
+    margin: 3%;
+    margin-top: 1.5%;
+    margin-bottom: 1.5%;
+  }
+  
+.over:after {
+    content: "";
+    display: block;
+    clear: both;
+}
+
+.under {
+    width: 42.6%;
+    margin-left: 3.5%;
+    margin-right: 3.5%;
+    float: left;
+    position: relative;
+  }
+  
+.under:after {
+    content: "";
+    display: block;
+    clear: both;
+}
+
+.btns{
     margin-top: 6px;
     padding: 2px;
-    background-color: rgb(161, 161, 161);
+    background-color: rgb(0, 132, 255);
     border-radius: 7px;
     border: 2px solid rgb(0, 0, 0);
     color: rgb(0, 0, 0);
 }
 
-#statistics:hover, #reload:hover {
+.btns:hover {
     box-shadow: 0 12px 16px 0 rgba(161, 161, 161, 0.719), 0 17px 50px 0 rgba(161, 161, 161, 0.815);
 }
