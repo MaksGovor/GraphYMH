@@ -692,15 +692,17 @@ const renameVertex = (visible, vertex, ctx) => {
 
 // Graphics 
 
-const hightlightVertex = (color, listVvertex, numberVertex, radius, ctx) => {
+const hightlightVertex = (color, listVvertex, numberVertex, radius, matrixNum, ctx) => {
   ctx.fillStyle = color;
   ctx.lineWidth = 2.4;
   for (const vertex of numberVertex){
     const {width, height, num} = listVvertex['ver' + vertex];
+    const index = matrixNum[0].indexOf(num);
+    const numeration = `${num}(${matrixNum[1][index]})`;
     ctx.beginPath();
     ctx.arc(width, height, radius - 1.2, 0, 2*Math.PI);
     ctx.fill()
-    ctx.strokeText(num, width - 5, height + 5);
+    ctx.strokeText(numeration, width - 15, height + 5, 35);
   }
 }
 
@@ -763,11 +765,11 @@ const bfsAlgoritm = (start, matrix, infoBfs, visualReturned, direction) => {
   return visualReturned;
 }
 
-const hightlightBFS = (visualReturned, vertexBlue, edgesBlue, matrix, sides, vertex, infoBfs, direction, ctx) => {
+const hightlightBFS = (visualReturned, vertexBlue, edgesBlue, matrix, sides, vertex, infoBfs, direction,matrixNum, ctx) => {
   if (visualReturned.length === 0) {
     graphTriangle(QUANTITY, ctx, sides, vertex);
     hightlightEdge('blue',matrix, vertex, sides,edgesBlue, ctx);
-    hightlightVertex('blue', vertex, vertexBlue, radius, ctx);
+    hightlightVertex('blue', vertex, vertexBlue, radius, matrixNum,ctx);
     return;
   }
   graphTriangle(QUANTITY, ctx, sides, vertex);
@@ -791,9 +793,9 @@ const hightlightBFS = (visualReturned, vertexBlue, edgesBlue, matrix, sides, ver
     vertexBlue.push(activeVer);
   }
   hightlightEdge('blue',matrix, vertex, sides,edgesBlue, ctx);
-  hightlightVertex('blue', vertex, vertexBlue, radius, ctx);
-  hightlightVertex('red', vertex, [activeVer], radius, ctx);
-  hightlightVertex('lime',vertex,limeV,radius,ctx);
+  hightlightVertex('blue', vertex, vertexBlue, radius,matrixNum, ctx);
+  hightlightVertex('red', vertex, [activeVer], radius,matrixNum, ctx);
+  hightlightVertex('lime',vertex,limeV,radius,matrixNum,ctx);
 }
 
 const doTreeTravesal = (QUANTITY, edgesBlue) =>{
@@ -808,7 +810,31 @@ const doTreeTravesal = (QUANTITY, edgesBlue) =>{
   return res;
 }
 
-//Usage // Begin
+const doMatrixNumeration = infoBfs => {
+  const res = [[],[]];
+  for (const key in infoBfs) {
+    const c = parseInt(key.slice(3)) - 1;
+    res[0][c] = c + 1;
+    res[1][c] = infoBfs[key];
+  }
+  return res;
+}
+
+const renameInTree = (vertex, matrixNum, ctx) => {
+  ctx.fillText(`🄱🄵🅂 search tree 🌲`, 40, 30);
+  ctx.fillStyle = '#deff9c';
+  for (const key in vertex) {
+    const {width, height, num} = vertex[key];
+    const index = matrixNum[0].indexOf(num);
+    ctx.beginPath();
+    ctx.arc(width, height, radius - 1.2, 0, 2*Math.PI);
+    ctx.fill();
+    ctx.strokeText(`${num}(${matrixNum[1][index]})`, width - 15, height + 5, 35);
+  }
+  ctx.fillStyle = 'black';
+}
+
+//Usage // Begin //
 
 //Lab 1
 
@@ -856,7 +882,7 @@ document.getElementById('condensation').onclick = function (){
 document.getElementById('matrix').onclick = function() {
   ctx2.fillStyle = 'black';
   ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
-  const flag = prompt('Adjacency/reachability/connectivity/bypass');
+  const flag = prompt('Adjacency/reachability/connectivity/bypass/numeration');
   if (flag.toLowerCase() === 'adjacency'){
     const f2 = prompt('What degree?');
     if (f2 === '1') serealizeMatrix('A', matrix, 80, 100);
@@ -875,6 +901,9 @@ document.getElementById('matrix').onclick = function() {
   }
   else if (flag.toLowerCase() === 'bypass'){
     serealizeMatrix('B', doTreeTravesal(QUANTITY, edgesBlue) , 80, 100);
+  }
+  else if (flag.toLowerCase() === 'numeration'){
+    serealizeMatrix('N', doMatrixNumeration(infoBfs) , 80, 100);
   }
 }
 
@@ -897,13 +926,14 @@ document.getElementById('components').onclick = function() {
 const vertexBlue = new Array();
 const edgesBlue = new Array();
 const infoBfs = doInfoBfs(QUANTITY), infoBfs2 = doInfoBfs(QUANTITY);
-const visualReturned = new Array(); 
+const visualReturned = new Array();
 
 
 document.getElementById('start').onclick = function(){
   const flag = prompt('Enter start vertex:');
   const flag2 = confirm('Consider the direction of the arrows?(Enter yes of cancellation)');
   const qq = bfsAlgoritm(parseInt(flag), matrix, infoBfs, visualReturned, flag2);
+  const matrixN = doMatrixNumeration(infoBfs);
   
   document.getElementById('BFS').onclick = function() {
     ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
@@ -916,19 +946,22 @@ document.getElementById('start').onclick = function(){
     sideRight: []
     }
     ctx2.lineWidth = 2;
-    hightlightBFS(qq,vertexBlue,edgesBlue, matrix,sides2, vertex2, infoBfs2, flag2, ctx2);
+    hightlightBFS(qq,vertexBlue,edgesBlue, matrix,sides2, vertex2, infoBfs2, flag2, matrixN, ctx2);
   }
+
+
+  document.getElementById('tree').onclick = function() {
+    ctx2.clearRect(0, 0, canvas2.width, canvas2.height)
+    const vertexT = new Object();
+    const sidesT = {
+      sideDown: [],
+      sideLeft: [],
+      sideRight: []
+      }
+    const matrixT = doTreeTravesal(QUANTITY,edgesBlue);
+    graphTriangle(QUANTITY, ctx2, sidesT, vertexT);
+    renameInTree(vertexT,matrixN,ctx2);
+    edge(matrixT, true, vertexT, sidesT, true, ctx2);
+  }  
 }
 
-document.getElementById('tree').onclick = function() {
-  ctx2.clearRect(0, 0, canvas2.width, canvas2.height)
-  const vertexT = new Object();
-  const sidesT = {
-    sideDown: [],
-    sideLeft: [],
-    sideRight: []
-    }
-  const matrixT = doTreeTravesal(QUANTITY,edgesBlue);
-  graphTriangle(QUANTITY, ctx2, sidesT, vertexT);
-  edge(matrixT, true, vertexT, sidesT, true, ctx2);
-}
